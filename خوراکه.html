@@ -1,0 +1,3867 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سیستم مدیریت فروشگاه خوراکه فروشی - نسخه کامل</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --accent-color: #f72585;
+            --success-color: #4cc9f0;
+            --warning-color: #f8961e;
+            --danger-color: #f94144;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --sidebar-bg: #1a1a2e;
+            --card-bg: #ffffff;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.07);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: var(--dark-color);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* استایل منوی همبرگر */
+        .hamburger-menu {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            z-index: 1000;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+        }
+        
+        .hamburger-menu:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+        }
+        
+        .hamburger-menu i {
+            color: white;
+            font-size: 24px;
+        }
+        
+        /* منوی سایدبار */
+        .sidebar {
+            position: fixed;
+            right: -320px;
+            top: 0;
+            width: 320px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--sidebar-bg) 0%, #16213e 100%);
+            color: white;
+            transition: var(--transition);
+            z-index: 999;
+            padding-top: 90px;
+            overflow-y: auto;
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .sidebar.active {
+            right: 0;
+        }
+        
+        .sidebar-header {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-header h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sidebar-header h3 i {
+            color: var(--success-color);
+        }
+        
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0 15px;
+        }
+        
+        .sidebar ul li {
+            margin-bottom: 5px;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+        }
+        
+        .sidebar ul li a {
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: var(--transition);
+            border-right: 3px solid transparent;
+        }
+        
+        .sidebar ul li a i {
+            margin-left: 12px;
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .sidebar ul li a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            padding-right: 25px;
+            border-right-color: var(--primary-color);
+        }
+        
+        .sidebar ul li.active a {
+            background: linear-gradient(90deg, rgba(67, 97, 238, 0.2), transparent);
+            color: white;
+            border-right-color: var(--primary-color);
+        }
+        
+        /* محتوای اصلی */
+        .main-content {
+            padding: 30px;
+            transition: var(--transition);
+            margin-right: 0;
+        }
+        
+        .main-content.sidebar-open {
+            margin-right: 320px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--card-bg) 0%, #f8fafc 100%);
+            padding: 30px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+        }
+        
+        header h1 {
+            color: var(--dark-color);
+            margin-bottom: 10px;
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        header p {
+            color: #6c757d;
+            font-size: 16px;
+            max-width: 800px;
+        }
+        
+        /* بخش‌های محتوا */
+        .content-section {
+            display: none;
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            animation: fadeInUp 0.5s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .section-title {
+            color: var(--dark-color);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light-color);
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .section-title i {
+            color: var(--primary-color);
+            background: rgba(67, 97, 238, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        
+        /* استایل جداول */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+            border-radius: var(--radius-md);
+            border: 1px solid #e9ecef;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 0;
+        }
+        
+        table th, table td {
+            padding: 16px 20px;
+            text-align: right;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: middle;
+        }
+        
+        table th {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            color: var(--dark-color);
+            font-weight: 600;
+            font-size: 15px;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        table tr:hover {
+            background-color: rgba(67, 97, 238, 0.03);
+        }
+        
+        .total-row {
+            font-weight: bold;
+            background-color: rgba(76, 201, 240, 0.1) !important;
+            color: var(--dark-color);
+        }
+        
+        /* استایل فرم‌ها */
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-col {
+            flex: 1;
+            min-width: 220px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--dark-color);
+            font-weight: 600;
+            font-size: 15px;
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-with-icon i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 45px 14px 15px;
+            border: 1px solid #dee2e6;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            transition: var(--transition);
+            background-color: white;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color), #e63946);
+        }
+        
+        .btn-danger:hover {
+            box-shadow: 0 6px 20px rgba(249, 65, 68, 0.3);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color), #3a86ff);
+        }
+        
+        .btn-success:hover {
+            box-shadow: 0 6px 20px rgba(76, 201, 240, 0.3);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning-color), #f3722c);
+        }
+        
+        .btn-warning:hover {
+            box-shadow: 0 6px 20px rgba(248, 150, 30, 0.3);
+        }
+        
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+        
+        /* استایل کارت‌ها */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, var(--card-bg) 0%, #f8fafc 100%);
+            border-radius: var(--radius-lg);
+            padding: 25px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+        }
+        
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: var(--radius-md);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 20px;
+            font-size: 28px;
+            color: white;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+        
+        .stat-info h3 {
+            font-size: 32px;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+        
+        .stat-info p {
+            color: #6c757d;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        /* استایل وضعیت */
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .status-paid {
+            background-color: rgba(76, 201, 240, 0.15);
+            color: #0a58ca;
+        }
+        
+        .status-unpaid {
+            background-color: rgba(249, 65, 68, 0.15);
+            color: #dc3545;
+        }
+        
+        .status-pending {
+            background-color: rgba(248, 150, 30, 0.15);
+            color: #fd7e14;
+        }
+        
+        /* استایل موبایل */
+        @media (max-width: 992px) {
+            .main-content.sidebar-open {
+                margin-right: 0;
+            }
+            
+            .sidebar {
+                width: 100%;
+                right: -100%;
+            }
+            
+            .sidebar.active {
+                right: 0;
+            }
+            
+            .form-col {
+                flex: 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            header {
+                padding: 20px;
+            }
+            
+            header h1 {
+                font-size: 24px;
+            }
+            
+            .content-section {
+                padding: 20px;
+            }
+        }
+        
+        /* استایل اعلان‌ها */
+        .alert {
+            padding: 18px 20px;
+            border-radius: var(--radius-md);
+            margin-bottom: 25px;
+            display: none;
+            border-right: 4px solid;
+            box-shadow: var(--shadow-sm);
+            animation: slideInRight 0.3s ease-out;
+        }
+        
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .alert-success {
+            background-color: rgba(76, 201, 240, 0.1);
+            color: #0a58ca;
+            border-right-color: var(--success-color);
+        }
+        
+        .alert-error {
+            background-color: rgba(249, 65, 68, 0.1);
+            color: #dc3545;
+            border-right-color: var(--danger-color);
+        }
+        
+        .alert-warning {
+            background-color: rgba(248, 150, 30, 0.1);
+            color: #fd7e14;
+            border-right-color: var(--warning-color);
+        }
+        
+        /* استایل تب‌ها */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 15px;
+        }
+        
+        .tab-btn {
+            padding: 12px 24px;
+            background: #f8f9fa;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            color: #6c757d;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+        
+        .tab-btn:hover:not(.active) {
+            background: #e9ecef;
+            color: var(--dark-color);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        /* استایل پیشرفت بار */
+        .progress-bar {
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        /* استایل آواتار */
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        
+        /* استایل جدول خرید عمده */
+        .bulk-purchase-table {
+            margin-top: 30px;
+        }
+        
+        .bulk-purchase-table table {
+            background: white;
+        }
+        
+        .bulk-purchase-table th {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        }
+        
+        /* استایل مودال */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            color: var(--dark-color);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6c757d;
+            transition: var(--transition);
+        }
+        
+        .modal-close:hover {
+            color: var(--danger-color);
+        }
+        
+        .modal-body {
+            padding: 25px;
+        }
+        
+        /* جستجو و فیلتر */
+        .search-box {
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            max-width: 300px;
+            margin-bottom: 10px;
+        }
+        
+        /* چارت */
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: var(--radius-lg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #dee2e6;
+            position: relative;
+        }
+        
+        .chart-placeholder {
+            color: #6c757d;
+            text-align: center;
+        }
+        
+        /* خالی بودن */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            display: block;
+            color: #dee2e6;
+        }
+        
+        /* دکمه‌های عملیات */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        /* بارگذاری */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(67, 97, 238, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <!-- منوی همبرگر -->
+    <div class="hamburger-menu" id="hamburgerBtn">
+        <i class="fas fa-bars"></i>
+    </div>
+    
+    <!-- سایدبار -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-store"></i> فروشگاه خوراکه فروشی</h3>
+        </div>
+        <ul>
+            <li class="active" data-section="dashboard"><a href="#"><i class="fas fa-home"></i>داشبورد</a></li>
+            <li data-section="bills"><a href="#"><i class="fas fa-receipt"></i>رسید بل‌ها</a></li>
+            <li data-section="loans"><a href="#"><i class="fas fa-hand-holding-usd"></i>قرضه مشتریان</a></li>
+            <li data-section="bulk-purchase"><a href="#"><i class="fas fa-shopping-cart"></i>خرید عمده</a></li>
+            <li data-section="products"><a href="#"><i class="fas fa-box"></i>مدیریت اجناس</a></li>
+            <li data-section="customers"><a href="#"><i class="fas fa-users"></i>مدیریت مشتریان</a></li>
+            <li data-section="sales"><a href="#"><i class="fas fa-chart-line"></i>گزارش فروش</a></li>
+            <li data-section="inventory"><a href="#"><i class="fas fa-warehouse"></i>موجودی انبار</a></li>
+            <li data-section="settings"><a href="#"><i class="fas fa-cog"></i>تنظیمات</a></li>
+        </ul>
+    </nav>
+    
+    <!-- محتوای اصلی -->
+    <div class="main-content" id="mainContent">
+        <header>
+            <h1>سیستم مدیریت فروشگاه خوراکه فروشی</h1>
+            <p>مدیریت کامل رسیدها، قرضه مشتریان، خرید عمده و موجودی فروشگاه</p>
+        </header>
+        
+        <!-- کارت‌های آمار -->
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-receipt"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="totalBills">0</h3>
+                    <p>تعداد کل بل‌ها</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-hand-holding-usd"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="totalLoans">0</h3>
+                    <p>قرضه‌های فعال</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="totalPurchases">0</h3>
+                    <p>خریدهای عمده</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="totalProducts">0</h3>
+                    <p>تعداد اجناس</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="totalCustomers">0</h3>
+                    <p>مشتریان ثبت‌شده</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="totalRevenue">0</h3>
+                    <p>درآمد کل (افغانی)</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- اعلان‌ها -->
+        <div id="alertContainer"></div>
+        
+        <!-- بخش داشبورد -->
+        <section id="dashboard" class="content-section active">
+            <h2 class="section-title"><i class="fas fa-home"></i>داشبورد مدیریت</h2>
+            <p>به سیستم مدیریت فروشگاه خوراکه فروشی خوش آمدید. از منوی سمت راست می‌توانید به بخش‌های مختلف سیستم دسترسی داشته باشید.</p>
+            
+            <div class="quick-actions" style="margin-top: 30px;">
+                <h3 style="margin: 0 0 20px 0; color: var(--dark-color); font-size: 20px;">اقدامات سریع</h3>
+                <div class="form-row">
+                    <button class="btn btn-success" onclick="showSection('bills')"><i class="fas fa-plus-circle"></i> ایجاد بل جدید</button>
+                    <button class="btn btn-warning" onclick="showSection('loans')"><i class="fas fa-hand-holding-usd"></i> ثبت قرضه جدید</button>
+                    <button class="btn btn-success" onclick="showSection('bulk-purchase')"><i class="fas fa-cart-plus"></i> خرید عمده جدید</button>
+                    <button class="btn" onclick="showSection('products')"><i class="fas fa-box"></i> افزودن جنس جدید</button>
+                    <button class="btn" onclick="showSection('customers')"><i class="fas fa-user-plus"></i> ثبت مشتری جدید</button>
+                </div>
+            </div>
+            
+            <div class="recent-activity" style="margin-top: 40px;">
+                <h3 style="margin-bottom: 20px; color: var(--dark-color); font-size: 20px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-history" style="color: var(--primary-color);"></i> فعالیت‌های اخیر
+                </h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>تاریخ</th>
+                                <th>نوع فعالیت</th>
+                                <th>جزئیات</th>
+                                <th>مبلغ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentActivity">
+                            <!-- فعالیت‌های اخیر به صورت داینامیک اضافه می‌شوند -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- نمودار فروش ماهانه -->
+            <div class="chart-container" style="margin-top: 40px;">
+                <canvas id="salesChart"></canvas>
+            </div>
+        </section>
+        
+        <!-- بخش رسید بل‌ها -->
+        <section id="bills" class="content-section">
+            <h2 class="section-title"><i class="fas fa-receipt"></i>مدیریت رسید بل‌ها</h2>
+            
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="new-bill">بل جدید</button>
+                <button class="tab-btn" data-tab="bills-list">لیست بل‌ها</button>
+            </div>
+            
+            <div id="new-bill" class="tab-content active">
+                <div class="form-row">
+                    <div class="form-col">
+                        <label for="billNumber">شماره بل:</label>
+                        <div class="input-with-icon">
+                            <input type="text" id="billNumber" value="BL-001" readonly>
+                            <i class="fas fa-hashtag"></i>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <label for="billDate">تاریخ:</label>
+                        <div class="input-with-icon">
+                            <input type="date" id="billDate">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <label for="billCustomer">مشتری:</label>
+                        <div class="input-with-icon">
+                            <select id="billCustomer">
+                                <option value="">انتخاب مشتری</option>
+                            </select>
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bill-items">
+                    <h3 style="margin: 25px 0 20px 0; color: var(--dark-color); font-size: 18px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-boxes" style="color: var(--primary-color);"></i> اجناس
+                    </h3>
+                    <div class="table-container">
+                        <table id="billItemsTable">
+                            <thead>
+                                <tr>
+                                    <th>نام جنس</th>
+                                    <th>تعداد</th>
+                                    <th>قیمت واحد (افغانی)</th>
+                                    <th>قیمت کل (افغانی)</th>
+                                    <th>عملیات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="billItems">
+                                <!-- آیتم‌های بل به صورت داینامیک اضافه می‌شوند -->
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td colspan="3" style="text-align: left;">مجموع کل:</td>
+                                    <td id="billTotal">0 افغانی</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    
+                    <div class="form-row" style="margin-top: 25px;">
+                        <div class="form-col">
+                            <label for="itemName">نام جنس:</label>
+                            <div class="input-with-icon">
+                                <select id="itemName">
+                                    <option value="">انتخاب جنس</option>
+                                </select>
+                                <i class="fas fa-box"></i>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <label for="itemQuantity">تعداد:</label>
+                            <div class="input-with-icon">
+                                <input type="number" id="itemQuantity" min="1" value="1">
+                                <i class="fas fa-sort-amount-up"></i>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <label for="itemPrice">قیمت واحد (افغانی):</label>
+                            <div class="input-with-icon">
+                                <input type="number" id="itemPrice" min="0" value="0">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                        </div>
+                        <div class="form-col" style="align-self: flex-end;">
+                            <button class="btn btn-success" onclick="addBillItem()"><i class="fas fa-plus"></i> افزودن جنس</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px; text-align: left;">
+                    <button class="btn btn-success" onclick="saveBill()"><i class="fas fa-save"></i> ذخیره بل</button>
+                    <button class="btn" onclick="printBill()"><i class="fas fa-print"></i> چاپ بل</button>
+                    <button class="btn btn-danger" onclick="clearBill()"><i class="fas fa-trash"></i> پاک کردن</button>
+                </div>
+            </div>
+            
+            <div id="bills-list" class="tab-content">
+                <div class="bills-list">
+                    <div class="search-box">
+                        <div class="input-with-icon search-input">
+                            <input type="text" id="searchBills" placeholder="جستجوی بل با شماره یا نام مشتری...">
+                            <i class="fas fa-search"></i>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>شماره بل</th>
+                                    <th>تاریخ</th>
+                                    <th>مشتری</th>
+                                    <th>تعداد اجناس</th>
+                                    <th>مبلغ کل (افغانی)</th>
+                                    <th>عملیات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="billsList">
+                                <!-- لیست بل‌ها به صورت داینامیک اضافه می‌شوند -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- بخش قرضه مشتریان -->
+        <section id="loans" class="content-section">
+            <h2 class="section-title"><i class="fas fa-hand-holding-usd"></i>مدیریت قرضه مشتریان</h2>
+            
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="new-loan">قرضه جدید</button>
+                <button class="tab-btn" data-tab="loans-list">لیست قرضه‌ها</button>
+            </div>
+            
+            <div id="new-loan" class="tab-content active">
+                <div class="form-row">
+                    <div class="form-col">
+                        <label for="loanCustomer">مشتری:</label>
+                        <div class="input-with-icon">
+                            <select id="loanCustomer">
+                                <option value="">انتخاب مشتری</option>
+                            </select>
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <label for="loanDate">تاریخ قرضه:</label>
+                        <div class="input-with-icon">
+                            <input type="date" id="loanDate">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="loan-items">
+                    <h3 style="margin: 25px 0 20px 0; color: var(--dark-color); font-size: 18px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-boxes" style="color: var(--primary-color);"></i> اجناس قرضی
+                    </h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>نام جنس</th>
+                                    <th>مقدار</th>
+                                    <th>قیمت واحد (افغانی)</th>
+                                    <th>قیمت کل (افغانی)</th>
+                                    <th>عملیات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="loanItems">
+                                <!-- آیتم‌های قرضه به صورت داینامیک اضافه می‌شوند -->
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td colspan="3" style="text-align: left;">مجموع کل قرضه:</td>
+                                    <td id="loanTotal">0 افغانی</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    
+                    <div class="form-row" style="margin-top: 25px;">
+                        <div class="form-col">
+                            <label for="loanItemName">نام جنس:</label>
+                            <div class="input-with-icon">
+                                <select id="loanItemName">
+                                    <option value="">انتخاب جنس</option>
+                                </select>
+                                <i class="fas fa-box"></i>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <label for="loanItemQuantity">مقدار:</label>
+                            <div class="input-with-icon">
+                                <input type="number" id="loanItemQuantity" min="1" value="1">
+                                <i class="fas fa-sort-amount-up"></i>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <label for="loanItemPrice">قیمت واحد (افغانی):</label>
+                            <div class="input-with-icon">
+                                <input type="number" id="loanItemPrice" min="0" value="0">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                        </div>
+                        <div class="form-col" style="align-self: flex-end;">
+                            <button class="btn btn-success" onclick="addLoanItem()"><i class="fas fa-plus"></i> افزودن جنس</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px; text-align: left;">
+                    <button class="btn btn-success" onclick="saveLoan()"><i class="fas fa-save"></i> ثبت قرضه</button>
+                    <button class="btn btn-danger" onclick="clearLoan()"><i class="fas fa-trash"></i> پاک کردن</button>
+                </div>
+            </div>
+            
+            <div id="loans-list" class="tab-content">
+                <div class="loans-list">
+                    <div class="search-box">
+                        <div class="input-with-icon search-input">
+                            <input type="text" id="searchLoans" placeholder="جستجوی قرضه با نام مشتری...">
+                            <i class="fas fa-search"></i>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>شماره</th>
+                                    <th>مشتری (ولد - قریه)</th>
+                                    <th>تاریخ قرضه</th>
+                                    <th>اجناس</th>
+                                    <th>مبلغ کل (افغانی)</th>
+                                    <th>وضعیت</th>
+                                    <th>عملیات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="loansList">
+                                <!-- لیست قرضه‌ها به صورت داینامیک اضافه می‌شوند -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- بخش خرید عمده -->
+        <section id="bulk-purchase" class="content-section">
+            <h2 class="section-title"><i class="fas fa-shopping-cart"></i>خرید عمده اجناس</h2>
+            
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="new-purchase">خرید جدید</button>
+                <button class="tab-btn" data-tab="purchases-list">لیست خریدها</button>
+            </div>
+            
+            <div id="new-purchase" class="tab-content active">
+                <div class="form-row">
+                    <div class="form-col">
+                        <label for="purchaseNumber">شماره بل خرید:</label>
+                        <div class="input-with-icon">
+                            <input type="text" id="purchaseNumber" value="PUR-001" readonly>
+                            <i class="fas fa-hashtag"></i>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <label for="purchaseDate">تاریخ خرید:</label>
+                        <div class="input-with-icon">
+                            <input type="date" id="purchaseDate">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <label for="purchaseShop">نام فروشگاه:</label>
+                        <div class="input-with-icon">
+                            <input type="text" id="purchaseShop" placeholder="نام فروشگاه فروشنده">
+                            <i class="fas fa-store"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="purchase-items">
+                    <h3 style="margin: 25px 0 20px 0; color: var(--dark-color); font-size: 18px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-boxes" style="color: var(--primary-color);"></i> اجناس خریداری شده
+                    </h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>نام جنس</th>
+                                    <th>مقدار</th>
+                                    <th>واحد</th>
+                                    <th>قیمت واحد (افغانی)</th>
+                                    <th>قیمت کل (افغانی)</th>
+                                    <th>عملیات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="purchaseItems">
+                                <!-- آیتم‌های خرید به صورت داینامیک اضافه می‌شوند -->
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td colspan="4" style="text-align: left;">مجموع کل خرید:</td>
+                                    <td id="purchaseTotal">0 افغانی</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    
+                    <div class="form-row" style="margin-top: 25px;">
+                        <div class="form-col">
+                            <label for="purchaseItemName">نام جنس:</label>
+                            <div class="input-with-icon">
+                                <input type="text" id="purchaseItemName" placeholder="نام جنس">
+                                <i class="fas fa-box"></i>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <label for="purchaseItemQuantity">مقدار:</label>
+                            <div class="input-with-icon">
+                                <input type="number" id="purchaseItemQuantity" min="1" value="1">
+                                <i class="fas fa-sort-amount-up"></i>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <label for="purchaseItemUnit">واحد:</label>
+                            <div class="input-with-icon">
+                                <select id="purchaseItemUnit">
+                                    <option value="کیلوگرم">کیلوگرم</option>
+                                    <option value="لیتر">لیتر</option>
+                                    <option value="بسته">بسته</option>
+                                    <option value="عدد">عدد</option>
+                                </select>
+                                <i class="fas fa-balance-scale"></i>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <label for="purchaseItemPrice">قیمت واحد (افغانی):</label>
+                            <div class="input-with-icon">
+                                <input type="number" id="purchaseItemPrice" min="0" value="0">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                        </div>
+                        <div class="form-col" style="align-self: flex-end;">
+                            <button class="btn btn-success" onclick="addPurchaseItem()"><i class="fas fa-plus"></i> افزودن جنس</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px; text-align: left;">
+                    <button class="btn btn-success" onclick="savePurchase()"><i class="fas fa-save"></i> ثبت خرید</button>
+                    <button class="btn btn-danger" onclick="clearPurchase()"><i class="fas fa-trash"></i> پاک کردن</button>
+                </div>
+            </div>
+            
+            <div id="purchases-list" class="tab-content">
+                <div class="bulk-purchase-table">
+                    <div class="search-box">
+                        <div class="input-with-icon search-input">
+                            <input type="text" id="searchPurchases" placeholder="جستجوی خرید با شماره یا نام فروشگاه...">
+                            <i class="fas fa-search"></i>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>شماره بل</th>
+                                    <th>تاریخ خرید</th>
+                                    <th>نام فروشگاه</th>
+                                    <th>تعداد اجناس</th>
+                                    <th>مبلغ کل (افغانی)</th>
+                                    <th>عملیات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="purchasesList">
+                                <!-- لیست خریدها به صورت داینامیک اضافه می‌شوند -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- بخش مدیریت اجناس -->
+        <section id="products" class="content-section">
+            <h2 class="section-title"><i class="fas fa-box"></i>مدیریت اجناس فروشگاه</h2>
+            
+            <div class="form-row">
+                <div class="form-col">
+                    <label for="productName">نام جنس:</label>
+                    <div class="input-with-icon">
+                        <input type="text" id="productName" placeholder="نام جنس">
+                        <i class="fas fa-box"></i>
+                    </div>
+                </div>
+                <div class="form-col">
+                    <label for="productCategory">دسته‌بندی:</label>
+                    <div class="input-with-icon">
+                        <select id="productCategory">
+                            <option value="">انتخاب دسته</option>
+                            <option value="خوراکی">خوراکی</option>
+                            <option value="نوشیدنی">نوشیدنی</option>
+                            <option value="خشکبار">خشکبار</option>
+                            <option value="لبنیات">لبنیات</option>
+                            <option value="دیگر">دیگر</option>
+                        </select>
+                        <i class="fas fa-tags"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-col">
+                    <label for="productPrice">قیمت فروش (افغانی):</label>
+                    <div class="input-with-icon">
+                        <input type="number" id="productPrice" min="0" placeholder="قیمت فروش">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                </div>
+                <div class="form-col">
+                    <label for="productCost">قیمت خرید (افغانی):</label>
+                        <div class="input-with-icon">
+                        <input type="number" id="productCost" min="0" placeholder="قیمت خرید">
+                        <i class="fas fa-money-bill"></i>
+                    </div>
+                </div>
+                <div class="form-col">
+                    <label for="productStock">موجودی:</label>
+                    <div class="input-with-icon">
+                        <input type="number" id="productStock" min="0" placeholder="تعداد موجودی">
+                        <i class="fas fa-warehouse"></i>
+                    </div>
+                </div>
+                <div class="form-col">
+                    <label for="productUnit">واحد اندازه‌گیری:</label>
+                    <div class="input-with-icon">
+                        <select id="productUnit">
+                            <option value="عدد">عدد</option>
+                            <option value="کیلوگرم">کیلوگرم</option>
+                            <option value="لیتر">لیتر</option>
+                            <option value="بسته">بسته</option>
+                        </select>
+                        <i class="fas fa-balance-scale"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 25px; text-align: left;">
+                <button class="btn btn-success" onclick="saveProduct()"><i class="fas fa-save"></i> ذخیره جنس</button>
+                <button class="btn btn-danger" onclick="clearProductForm()"><i class="fas fa-trash"></i> پاک کردن فرم</button>
+            </div>
+            
+            <div class="products-list" style="margin-top: 40px;">
+                <div class="search-box">
+                    <div class="input-with-icon search-input">
+                        <input type="text" id="searchProducts" placeholder="جستجوی جنس با نام یا دسته‌بندی...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>نام جنس</th>
+                                <th>دسته‌بندی</th>
+                                <th>قیمت فروش</th>
+                                <th>قیمت خرید</th>
+                                <th>موجودی</th>
+                                <th>واحد</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsList">
+                            <!-- لیست اجناس به صورت داینامیک اضافه می‌شوند -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+        <!-- بخش مدیریت مشتریان -->
+        <section id="customers" class="content-section">
+            <h2 class="section-title"><i class="fas fa-users"></i>مدیریت مشتریان</h2>
+            
+            <div class="form-row">
+                <div class="form-col">
+                    <label for="customerName">نام کامل:</label>
+                    <div class="input-with-icon">
+                        <input type="text" id="customerName" placeholder="نام مشتری">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+                <div class="form-col">
+                    <label for="customerFather">نام پدر (ولد):</label>
+                    <div class="input-with-icon">
+                        <input type="text" id="customerFather" placeholder="نام پدر">
+                        <i class="fas fa-user-friends"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-col">
+                    <label for="customerVillage">قریه:</label>
+                    <div class="input-with-icon">
+                        <input type="text" id="customerVillage" placeholder="نام قریه">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                </div>
+                <div class="form-col">
+                    <label for="customerPhone">شماره تماس:</label>
+                    <div class="input-with-icon">
+                        <input type="text" id="customerPhone" placeholder="شماره تماس">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 25px; text-align: left;">
+                <button class="btn btn-success" onclick="saveCustomer()"><i class="fas fa-save"></i> ذخیره مشتری</button>
+                <button class="btn btn-danger" onclick="clearCustomerForm()"><i class="fas fa-trash"></i> پاک کردن فرم</button>
+            </div>
+            
+            <div class="customers-list" style="margin-top: 40px;">
+                <div class="search-box">
+                    <div class="input-with-icon search-input">
+                        <input type="text" id="searchCustomers" placeholder="جستجوی مشتری با نام یا قریه...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>نام</th>
+                                <th>ولد</th>
+                                <th>قریه</th>
+                                <th>شماره تماس</th>
+                                <th>تعداد قرضه‌ها</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customersList">
+                            <!-- لیست مشتریان به صورت داینامیک اضافه می‌شوند -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+        <!-- بخش گزارش فروش -->
+        <section id="sales" class="content-section">
+            <h2 class="section-title"><i class="fas fa-chart-line"></i>گزارش فروش</h2>
+            
+            <div class="form-row">
+                <div class="form-col">
+                    <label for="reportStartDate">از تاریخ:</label>
+                    <div class="input-with-icon">
+                        <input type="date" id="reportStartDate">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                </div>
+                <div class="form-col">
+                    <label for="reportEndDate">تا تاریخ:</label>
+                    <div class="input-with-icon">
+                        <input type="date" id="reportEndDate">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                </div>
+                <div class="form-col" style="align-self: flex-end;">
+                    <button class="btn btn-success" onclick="generateSalesReport()"><i class="fas fa-chart-bar"></i> ایجاد گزارش</button>
+                </div>
+            </div>
+            
+            <div class="report-results" style="margin-top: 30px;">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>تاریخ</th>
+                                <th>تعداد بل‌ها</th>
+                                <th>تعداد قرضه‌ها</th>
+                                <th>مجموع فروش (افغانی)</th>
+                                <th>مجموع قرضه‌ها (افغانی)</th>
+                                <th>درآمد خالص (افغانی)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="salesReportResults">
+                            <!-- نتایج گزارش به صورت داینامیک اضافه می‌شوند -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="chart-container" style="margin-top: 40px;">
+                <canvas id="reportChart"></canvas>
+            </div>
+        </section>
+        
+        <!-- بخش موجودی انبار -->
+        <section id="inventory" class="content-section">
+            <h2 class="section-title"><i class="fas fa-warehouse"></i>موجودی انبار</h2>
+            
+            <div class="search-box">
+                <div class="input-with-icon search-input">
+                    <input type="text" id="searchInventory" placeholder="جستجوی جنس با نام...">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>نام جنس</th>
+                            <th>موجودی فعلی</th>
+                            <th>حداقل موجودی</th>
+                            <th>واحد</th>
+                            <th>وضعیت</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryList">
+                        <!-- موجودی انبار به صورت داینامیک اضافه می‌شود -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div style="margin-top: 30px;">
+                <h3 style="margin-bottom: 15px; color: var(--dark-color);">موجودی بحرانی (نیاز به سفارش)</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>نام جنس</th>
+                                <th>موجودی فعلی</th>
+                                <th>حداقل موجودی</th>
+                                <th>کمبود</th>
+                                <th>واحد</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="criticalInventory">
+                            <!-- موجودی بحرانی به صورت داینامیک اضافه می‌شود -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+        <!-- بخش تنظیمات -->
+        <section id="settings" class="content-section">
+            <h2 class="section-title"><i class="fas fa-cog"></i>تنظیمات سیستم</h2>
+            
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="general-settings">تنظیمات عمومی</button>
+                <button class="tab-btn" data-tab="backup-settings">پشتیبان‌گیری</button>
+                <button class="tab-btn" data-tab="about">درباره سیستم</button>
+            </div>
+            
+            <div id="general-settings" class="tab-content active">
+                <div class="form-row">
+                    <div class="form-col">
+                        <label for="shopName">نام فروشگاه:</label>
+                        <div class="input-with-icon">
+                            <input type="text" id="shopName" value="فروشگاه خوراکه فروشی">
+                            <i class="fas fa-store"></i>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <label for="currency">واحد پول:</label>
+                        <div class="input-with-icon">
+                            <select id="currency">
+                                <option value="افغانی">افغانی</option>
+                                <option value="دلار">دلار</option>
+                                <option value="روپیه">روپیه</option>
+                            </select>
+                            <i class="fas fa-coins"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <label for="taxRate">نرخ مالیات (%):</label>
+                        <div class="input-with-icon">
+                            <input type="number" id="taxRate" min="0" max="100" value="10">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <label for="minStock">حداقل موجودی پیش‌فرض:</label>
+                        <div class="input-with-icon">
+                            <input type="number" id="minStock" min="0" value="5">
+                            <i class="fas fa-box"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px;">
+                    <button class="btn btn-success" onclick="saveSettings()"><i class="fas fa-save"></i> ذخیره تنظیمات</button>
+                </div>
+            </div>
+            
+            <div id="backup-settings" class="tab-content">
+                <div class="backup-options">
+                    <h3 style="margin-bottom: 20px; color: var(--dark-color);">مدیریت داده‌ها</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <button class="btn btn-success" style="width: 100%;" onclick="exportData()">
+                                <i class="fas fa-download"></i> دانلود پشتیبان
+                            </button>
+                            <p style="margin-top: 10px; font-size: 14px; color: #6c757d;">ذخیره کلیه اطلاعات سیستم در یک فایل</p>
+                        </div>
+                        <div class="form-col">
+                            <button class="btn btn-warning" style="width: 100%;" onclick="document.getElementById('importFile').click()">
+                                <i class="fas fa-upload"></i> بازیابی پشتیبان
+                            </button>
+                            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+                            <p style="margin-top: 10px; font-size: 14px; color: #6c757d;">بارگذاری اطلاعات از یک فایل پشتیبان</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row" style="margin-top: 30px;">
+                        <div class="form-col">
+                            <button class="btn btn-danger" style="width: 100%;" onclick="resetData()">
+                                <i class="fas fa-trash"></i> حذف همه داده‌ها
+                            </button>
+                            <p style="margin-top: 10px; font-size: 14px; color: #6c757d;">پاک کردن کلیه اطلاعات سیستم (غیرقابل بازگشت)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="about" class="tab-content">
+                <div class="about-content">
+                    <h3 style="margin-bottom: 20px; color: var(--dark-color);">درباره سیستم</h3>
+                    <p style="margin-bottom: 15px; line-height: 1.8;">
+                        <strong>سیستم مدیریت فروشگاه خوراکه فروشی</strong> یک سیستم جامع برای مدیریت کامل فرآیندهای فروشگاه‌های خواروبار و مواد غذایی است.
+                    </p>
+                    <p style="margin-bottom: 15px; line-height: 1.8;">
+                        این سیستم به زبان‌های فارسی/دری طراحی شده و نیازهای خاص فروشگاه‌های محلی در افغانستان را در نظر گرفته است.
+                    </p>
+                    
+                    <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: var(--radius-md);">
+                        <h4 style="margin-bottom: 15px; color: var(--dark-color);">ویژگی‌های اصلی:</h4>
+                        <ul style="list-style-type: none; padding-right: 20px;">
+                            <li style="margin-bottom: 10px; padding-right: 10px; position: relative;">
+                                <i class="fas fa-check-circle" style="color: var(--success-color); position: absolute; right: -20px; top: 5px;"></i>
+                                مدیریت رسید بل‌ها (فاکتورها)
+                            </li>
+                            <li style="margin-bottom: 10px; padding-right: 10px; position: relative;">
+                                <i class="fas fa-check-circle" style="color: var(--success-color); position: absolute; right: -20px; top: 5px;"></i>
+                                سیستم قرضه مشتریان
+                            </li>
+                            <li style="margin-bottom: 10px; padding-right: 10px; position: relative;">
+                                <i class="fas fa-check-circle" style="color: var(--success-color); position: absolute; right: -20px; top: 5px;"></i>
+                                خرید عمده از تأمین‌کنندگان
+                            </li>
+                            <li style="margin-bottom: 10px; padding-right: 10px; position: relative;">
+                                <i class="fas fa-check-circle" style="color: var(--success-color); position: absolute; right: -20px; top: 5px;"></i>
+                                مدیریت موجودی انبار
+                            </li>
+                            <li style="margin-bottom: 10px; padding-right: 10px; position: relative;">
+                                <i class="fas fa-check-circle" style="color: var(--success-color); position: absolute; right: -20px; top: 5px;"></i>
+                                گزارش‌گیری و آمار فروش
+                            </li>
+                            <li style="margin-bottom: 10px; padding-right: 10px; position: relative;">
+                                <i class="fas fa-check-circle" style="color: var(--success-color); position: absolute; right: -20px; top: 5px;"></i>
+                                پشتیبان‌گیری از داده‌ها
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: var(--radius-md);">
+                        <p style="margin-bottom: 10px; color: #6c757d;">
+                            <strong>نسخه:</strong> ۱.۰.۰
+                        </p>
+                        <p style="color: #6c757d;">
+                            <strong>تاریخ انتشار:</strong> مهر ۱۴۰۲
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <!-- مودال نمایش جزئیات -->
+    <div class="modal" id="detailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">جزئیات</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent">
+                    <!-- محتوای مودال -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- بارگذاری Chart.js برای نمودارها -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        // ==============================================
+        // سیستم مدیریت داده‌ها
+        // ==============================================
+        
+        const STORAGE_KEY = 'grocery_store_system';
+        
+        // ساختار داده‌های سیستم
+        let storeData = {
+            settings: {
+                shopName: "فروشگاه خوراکه فروشی",
+                currency: "افغانی",
+                taxRate: 10,
+                minStock: 5,
+                nextBillNumber: 1,
+                nextLoanId: 1,
+                nextPurchaseId: 1,
+                nextProductId: 1,
+                nextCustomerId: 1
+            },
+            products: [],
+            customers: [],
+            bills: [],
+            loans: [],
+            purchases: [],
+            recentActivities: []
+        };
+        
+        // بارگذاری داده‌ها از localStorage
+        function loadData() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (savedData) {
+                storeData = JSON.parse(savedData);
+            } else {
+                // داده‌های نمونه برای شروع
+                initializeSampleData();
+            }
+            updateAllDropdowns();
+            renderAllLists();
+            updateStats();
+        }
+        
+        // ذخیره داده‌ها در localStorage
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(storeData));
+        }
+        
+        // مقداردهی اولیه داده‌های نمونه
+        function initializeSampleData() {
+            // محصولات نمونه
+            storeData.products = [
+                {id: 1, name: "برنج", category: "خوراکی", price: 150, cost: 120, stock: 50, unit: "کیلوگرم"},
+                {id: 2, name: "روغن", category: "خوراکی", price: 200, cost: 180, stock: 30, unit: "لیتر"},
+                {id: 3, name: "شکر", category: "خوراکی", price: 50, cost: 40, stock: 100, unit: "کیلوگرم"},
+                {id: 4, name: "چای", category: "نوشیدنی", price: 100, cost: 80, stock: 40, unit: "بسته"},
+                {id: 5, name: "نمک", category: "خوراکی", price: 30, cost: 25, stock: 80, unit: "کیلوگرم"}
+            ];
+            
+            // مشتریان نمونه
+            storeData.customers = [
+                {id: 1, name: "احمد محمدی", father: "عبدالله", village: "شهرک بهار", phone: "0700123456"},
+                {id: 2, name: "رضا کریمی", father: "محمد", village: "ده مراد", phone: "0700123457"},
+                {id: 3, name: "سارا احمدی", father: "حسین", village: "ده سرخ", phone: "0700123458"}
+            ];
+            
+            // بل‌های نمونه
+            storeData.bills = [
+                {id: 1, number: "BL-001", date: "2023-10-10", customerId: 1, items: [
+                    {productId: 1, name: "برنج", quantity: 2, price: 150, total: 300},
+                    {productId: 2, name: "روغن", quantity: 1, price: 200, total: 200},
+                    {productId: 3, name: "شکر", quantity: 3, price: 50, total: 150}
+                ], total: 650},
+                {id: 2, number: "BL-002", date: "2023-10-12", customerId: 2, items: [
+                    {productId: 4, name: "چای", quantity: 2, price: 100, total: 200},
+                    {productId: 5, name: "نمک", quantity: 1, price: 30, total: 30}
+                ], total: 230}
+            ];
+            
+            // قرضه‌های نمونه
+            storeData.loans = [
+                {id: 1, customerId: 1, date: "2023-10-05", items: [
+                    {productId: 1, name: "برنج", quantity: 5, price: 150, total: 750},
+                    {productId: 2, name: "روغن", quantity: 2, price: 200, total: 400}
+                ], total: 1150, status: "unpaid"},
+                {id: 2, customerId: 3, date: "2023-10-08", items: [
+                    {productId: 3, name: "شکر", quantity: 3, price: 50, total: 150},
+                    {productId: 4, name: "چای", quantity: 1, price: 100, total: 100}
+                ], total: 250, status: "paid"}
+            ];
+            
+            // خریدهای نمونه
+            storeData.purchases = [
+                {id: 1, number: "PUR-001", date: "2023-10-01", shop: "فروشگاه عمده فروشی کابل", items: [
+                    {name: "برنج", quantity: 50, unit: "کیلوگرم", price: 120, total: 6000},
+                    {name: "روغن", quantity: 20, unit: "لیتر", price: 180, total: 3600},
+                    {name: "شکر", quantity: 30, unit: "کیلوگرم", price: 40, total: 1200}
+                ], total: 10800},
+                {id: 2, number: "PUR-002", date: "2023-10-05", shop: "عمده فروشی نان و روغن", items: [
+                    {name: "چای", quantity: 10, unit: "بسته", price: 80, total: 800},
+                    {name: "نمک", quantity: 25, unit: "کیلوگرم", price: 25, total: 625}
+                ], total: 1425}
+            ];
+            
+            // فعالیت‌های اخیر
+            storeData.recentActivities = [
+                {date: "2023-10-15", type: "بل جدید", details: "بل شماره BL-002 برای رضا کریمی", amount: 230},
+                {date: "2023-10-12", type: "قرضه", details: "قرضه جدید برای سارا احمدی", amount: 250},
+                {date: "2023-10-10", type: "بل جدید", details: "بل شماره BL-001 برای احمد محمدی", amount: 650},
+                {date: "2023-10-08", type: "قرضه", details: "قرضه جدید برای احمد محمدی", amount: 1150},
+                {date: "2023-10-05", type: "خرید عمده", details: "خرید عمده از فروشگاه نان و روغن", amount: 1425},
+                {date: "2023-10-01", type: "خرید عمده", details: "خرید عمده از فروشگاه کابل", amount: 10800}
+            ];
+            
+            // شمارنده‌ها
+            storeData.settings.nextBillNumber = 3;
+            storeData.settings.nextLoanId = 3;
+            storeData.settings.nextPurchaseId = 3;
+            storeData.settings.nextProductId = 6;
+            storeData.settings.nextCustomerId = 4;
+        }
+        
+        // ==============================================
+        // توابع عمومی
+        // ==============================================
+        
+        // نمایش اعلان
+        function showAlert(message, type = 'success') {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertId = 'alert-' + Date.now();
+            
+            const alertClass = type === 'error' ? 'alert-error' : 
+                              type === 'warning' ? 'alert-warning' : 'alert-success';
+            
+            const icon = type === 'error' ? 'exclamation-circle' : 
+                        type === 'warning' ? 'exclamation-triangle' : 'check-circle';
+            
+            const alertHTML = `
+                <div id="${alertId}" class="alert ${alertClass}">
+                    <i class="fas fa-${icon}" style="margin-left: 8px;"></i>
+                    ${message}
+                </div>
+            `;
+            
+            alertContainer.innerHTML = alertHTML;
+            const alertElement = document.getElementById(alertId);
+            alertElement.style.display = 'block';
+            
+            // حذف خودکار اعلان بعد از 5 ثانیه
+            setTimeout(() => {
+                alertElement.style.display = 'none';
+            }, 5000);
+        }
+        
+        // به‌روزرسانی آمارها
+        function updateStats() {
+            document.getElementById('totalBills').textContent = storeData.bills.length;
+            document.getElementById('totalLoans').textContent = storeData.loans.filter(l => l.status === 'unpaid').length;
+            document.getElementById('totalPurchases').textContent = storeData.purchases.length;
+            document.getElementById('totalProducts').textContent = storeData.products.length;
+            document.getElementById('totalCustomers').textContent = storeData.customers.length;
+            
+            // محاسبه درآمد کل
+            let totalRevenue = 0;
+            
+            // مجموع مبلغ بل‌ها
+            storeData.bills.forEach(bill => {
+                totalRevenue += bill.total;
+            });
+            
+            // مجموع قرضه‌های پرداخت شده
+            storeData.loans.forEach(loan => {
+                if (loan.status === 'paid') {
+                    totalRevenue += loan.total;
+                }
+            });
+            
+            document.getElementById('totalRevenue').textContent = totalRevenue.toLocaleString();
+        }
+        
+        // اضافه کردن فعالیت جدید
+        function addActivity(type, details, amount) {
+            const today = new Date().toISOString().split('T')[0];
+            storeData.recentActivities.unshift({
+                date: today,
+                type: type,
+                details: details,
+                amount: amount
+            });
+            
+            // محدود کردن تعداد فعالیت‌ها به 20
+            if (storeData.recentActivities.length > 20) {
+                storeData.recentActivities = storeData.recentActivities.slice(0, 20);
+            }
+            
+            saveData();
+            renderRecentActivity();
+        }
+        
+        // ==============================================
+        // مدیریت منو و نمایش بخش‌ها
+        // ==============================================
+        
+        // بارگذاری اولیه صفحه
+        document.addEventListener('DOMContentLoaded', function() {
+            initApp();
+        });
+        
+        // تابع مقداردهی اولیه برنامه
+        function initApp() {
+            // تنظیم منوی همبرگر
+            setupHamburgerMenu();
+            
+            // تنظیم تب‌ها
+            setupTabs();
+            
+            // بارگذاری داده‌ها
+            loadData();
+            
+            // نمایش داشبورد به عنوان پیش‌فرض
+            showSection('dashboard');
+            
+            // تنظیم تاریخ امروز به عنوان پیش‌فرض
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('billDate').value = today;
+            document.getElementById('loanDate').value = today;
+            document.getElementById('purchaseDate').value = today;
+            document.getElementById('reportStartDate').value = today;
+            document.getElementById('reportEndDate').value = today;
+            
+            // به‌روزرسانی شماره‌ها
+            updateBillNumber();
+            updatePurchaseNumber();
+            
+            // تنظیم تنظیمات
+            loadSettings();
+            
+            // ایجاد نمودار فروش
+            createSalesChart();
+        }
+        
+        // تنظیم منوی همبرگر
+        function setupHamburgerMenu() {
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const menuItems = document.querySelectorAll('.sidebar ul li');
+            
+            hamburgerBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+                mainContent.classList.toggle('sidebar-open');
+                
+                // تغییر آیکون منو
+                const icon = this.querySelector('i');
+                if (sidebar.classList.contains('active')) {
+                    icon.className = 'fas fa-times';
+                } else {
+                    icon.className = 'fas fa-bars';
+                }
+            });
+            
+            // اضافه کردن رویداد کلیک برای آیتم‌های منو
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const sectionId = this.getAttribute('data-section');
+                    showSection(sectionId);
+                    
+                    // علامت‌گذاری آیتم فعال
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // بستن منو در حالت موبایل
+                    if (window.innerWidth <= 992) {
+                        sidebar.classList.remove('active');
+                        mainContent.classList.remove('sidebar-open');
+                        hamburgerBtn.querySelector('i').className = 'fas fa-bars';
+                    }
+                });
+            });
+        }
+        
+        // تنظیم تب‌ها
+        function setupTabs() {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    const parentSection = this.closest('.content-section');
+                    
+                    // غیرفعال کردن همه تب‌های این بخش
+                    parentSection.querySelectorAll('.tab-btn').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                    
+                    // غیرفعال کردن همه محتوای تب‌های این بخش
+                    parentSection.querySelectorAll('.tab-content').forEach(c => {
+                        c.classList.remove('active');
+                    });
+                    
+                    // فعال کردن تب انتخاب شده
+                    this.classList.add('active');
+                    parentSection.querySelector(`#${tabId}`).classList.add('active');
+                });
+            });
+        }
+        
+        // نمایش بخش انتخاب شده
+        function showSection(sectionId) {
+            // مخفی کردن تمام بخش‌ها
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // نمایش بخش انتخاب شده
+            const activeSection = document.getElementById(sectionId);
+            activeSection.classList.add('active');
+            
+            // به‌روزرسانی لیست‌ها در صورت نیاز
+            if (sectionId === 'dashboard') {
+                renderRecentActivity();
+                createSalesChart();
+            } else if (sectionId === 'bills') {
+                renderBillsList();
+            } else if (sectionId === 'loans') {
+                renderLoansList();
+            } else if (sectionId === 'bulk-purchase') {
+                renderPurchasesList();
+            } else if (sectionId === 'products') {
+                renderProductsList();
+            } else if (sectionId === 'customers') {
+                renderCustomersList();
+            } else if (sectionId === 'inventory') {
+                renderInventory();
+                renderCriticalInventory();
+            }
+            
+            // به‌روزرسانی آمارها
+            updateStats();
+        }
+        
+        // ==============================================
+        // مدیریت بل‌ها
+        // ==============================================
+        
+        let currentBillItems = [];
+        
+        // به‌روزرسانی شماره بل
+        function updateBillNumber() {
+            const billNumber = `BL-${String(storeData.settings.nextBillNumber).padStart(3, '0')}`;
+            document.getElementById('billNumber').value = billNumber;
+        }
+        
+        // به‌روزرسانی تمام dropdownها
+        function updateAllDropdowns() {
+            updateCustomerDropdowns();
+            updateProductDropdowns();
+        }
+        
+        // به‌روزرسانی dropdown مشتریان
+        function updateCustomerDropdowns() {
+            const billCustomerSelect = document.getElementById('billCustomer');
+            const loanCustomerSelect = document.getElementById('loanCustomer');
+            
+            // پاک کردن options فعلی
+            billCustomerSelect.innerHTML = '<option value="">انتخاب مشتری</option>';
+            loanCustomerSelect.innerHTML = '<option value="">انتخاب مشتری</option>';
+            
+            // اضافه کردن مشتریان
+            storeData.customers.forEach(customer => {
+                const option1 = document.createElement('option');
+                option1.value = customer.id;
+                option1.textContent = `${customer.name} - ولد: ${customer.father} - قریه: ${customer.village}`;
+                billCustomerSelect.appendChild(option1);
+                
+                const option2 = document.createElement('option');
+                option2.value = customer.id;
+                option2.textContent = `${customer.name} - ولد: ${customer.father} - قریه: ${customer.village}`;
+                loanCustomerSelect.appendChild(option2);
+            });
+        }
+        
+        // به‌روزرسانی dropdown محصولات
+        function updateProductDropdowns() {
+            const itemNameSelect = document.getElementById('itemName');
+            const loanItemNameSelect = document.getElementById('loanItemName');
+            
+            // پاک کردن options فعلی
+            itemNameSelect.innerHTML = '<option value="">انتخاب جنس</option>';
+            loanItemNameSelect.innerHTML = '<option value="">انتخاب جنس</option>';
+            
+            // اضافه کردن محصولات
+            storeData.products.forEach(product => {
+                const option1 = document.createElement('option');
+                option1.value = product.id;
+                option1.textContent = `${product.name} (${product.price} افغانی)`;
+                itemNameSelect.appendChild(option1);
+                
+                const option2 = document.createElement('option');
+                option2.value = product.id;
+                option2.textContent = `${product.name} (${product.price} افغانی)`;
+                loanItemNameSelect.appendChild(option2);
+            });
+        }
+        
+        // افزودن آیتم به بل
+        function addBillItem() {
+            const itemName = document.getElementById('itemName').value;
+            const itemQuantity = document.getElementById('itemQuantity').value;
+            const itemPrice = document.getElementById('itemPrice').value;
+            
+            if (!itemName || !itemQuantity || !itemPrice) {
+                showAlert('لطفاً تمام فیلدهای جنس را پر کنید', 'error');
+                return;
+            }
+            
+            // پیدا کردن نام جنس
+            const product = storeData.products.find(p => p.id == itemName);
+            if (!product) {
+                showAlert('جنس انتخاب شده معتبر نیست', 'error');
+                return;
+            }
+            
+            const quantity = parseInt(itemQuantity);
+            const price = parseInt(itemPrice);
+            const total = quantity * price;
+            
+            // بررسی موجودی
+            if (product.stock < quantity) {
+                showAlert(`موجودی کافی نیست. موجودی فعلی: ${product.stock}`, 'error');
+                return;
+            }
+            
+            // افزودن به لیست موقت
+            currentBillItems.push({
+                productId: product.id,
+                name: product.name,
+                quantity: quantity,
+                price: price,
+                total: total
+            });
+            
+            // رندر مجدد جدول آیتم‌های بل
+            renderBillItems();
+            
+            // پاک کردن فرم
+            document.getElementById('itemQuantity').value = 1;
+            document.getElementById('itemPrice').value = product.price;
+            
+            showAlert('جنس به بل اضافه شد');
+        }
+        
+        // حذف آیتم از بل
+        function removeBillItem(index) {
+            currentBillItems.splice(index, 1);
+            renderBillItems();
+            showAlert('جنس از بل حذف شد');
+        }
+        
+        // رندر آیتم‌های بل
+        function renderBillItems() {
+            const billItemsContainer = document.getElementById('billItems');
+            let total = 0;
+            
+            if (currentBillItems.length === 0) {
+                billItemsContainer.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #999; padding: 30px;">
+                            <i class="fas fa-box-open" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
+                            هیچ جنس‌ای اضافه نشده است
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('billTotal').textContent = '0 افغانی';
+                return;
+            }
+            
+            let itemsHTML = '';
+            currentBillItems.forEach((item, index) => {
+                itemsHTML += `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.price.toLocaleString()} افغانی</td>
+                        <td>${item.total.toLocaleString()} افغانی</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="removeBillItem(${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                total += item.total;
+            });
+            
+            billItemsContainer.innerHTML = itemsHTML;
+            document.getElementById('billTotal').textContent = total.toLocaleString() + ' افغانی';
+        }
+        
+        // ذخیره بل
+        function saveBill() {
+            const billNumber = document.getElementById('billNumber').value;
+            const billDate = document.getElementById('billDate').value;
+            const billCustomer = document.getElementById('billCustomer').value;
+            
+            if (!billCustomer) {
+                showAlert('لطفاً مشتری را انتخاب کنید', 'error');
+                return;
+            }
+            
+            if (currentBillItems.length === 0) {
+                showAlert('لطفاً حداقل یک جنس به بل اضافه کنید', 'error');
+                return;
+            }
+            
+            // پیدا کردن نام مشتری
+            const customer = storeData.customers.find(c => c.id == billCustomer);
+            if (!customer) {
+                showAlert('مشتری انتخاب شده معتبر نیست', 'error');
+                return;
+            }
+            
+            // محاسبه مجموع
+            const total = currentBillItems.reduce((sum, item) => sum + item.total, 0);
+            
+            // ایجاد بل جدید
+            const newBill = {
+                id: storeData.settings.nextBillNumber,
+                number: billNumber,
+                date: billDate,
+                customerId: parseInt(billCustomer),
+                items: [...currentBillItems],
+                total: total
+            };
+            
+            // کسر از موجودی انبار
+            currentBillItems.forEach(item => {
+                const product = storeData.products.find(p => p.id === item.productId);
+                if (product) {
+                    product.stock -= item.quantity;
+                }
+            });
+            
+            // افزودن به لیست بل‌ها
+            storeData.bills.push(newBill);
+            
+            // افزایش شمارنده
+            storeData.settings.nextBillNumber++;
+            
+            // افزودن فعالیت
+            addActivity("بل جدید", `بل شماره ${billNumber} برای ${customer.name}`, total);
+            
+            // به‌روزرسانی لیست بل‌ها
+            renderBillsList();
+            
+            // پاک کردن فرم
+            clearBill();
+            
+            // به‌روزرسانی آمارها
+            updateStats();
+            
+            // ذخیره داده‌ها
+            saveData();
+            
+            // نمایش اعلان موفقیت
+            showAlert(`بل شماره ${billNumber} با موفقیت ثبت شد`);
+        }
+        
+        // چاپ بل
+        function printBill() {
+            const billNumber = document.getElementById('billNumber').value;
+            const billDate = document.getElementById('billDate').value;
+            const billCustomer = document.getElementById('billCustomer');
+            const customerName = billCustomer.options[billCustomer.selectedIndex]?.text || '';
+            
+            if (currentBillItems.length === 0) {
+                showAlert('لطفاً ابتدا یک بل ایجاد کنید', 'error');
+                return;
+            }
+            
+            // ایجاد محتوای چاپ
+            let printContent = `
+                <div style="font-family: Vazirmatn, Tahoma; text-align: right; padding: 20px; direction: rtl;">
+                    <h2 style="text-align: center; margin-bottom: 20px;">فروشگاه خوراکه فروشی</h2>
+                    <hr>
+                    <div style="margin-bottom: 20px;">
+                        <p><strong>شماره بل:</strong> ${billNumber}</p>
+                        <p><strong>تاریخ:</strong> ${billDate}</p>
+                        <p><strong>مشتری:</strong> ${customerName}</p>
+                    </div>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                        <thead>
+                            <tr style="background: #f2f2f2;">
+                                <th style="border: 1px solid #ddd; padding: 8px;">نام جنس</th>
+                                <th style="border: 1px solid #ddd; padding: 8px;">تعداد</th>
+                                <th style="border: 1px solid #ddd; padding: 8px;">قیمت واحد</th>
+                                <th style="border: 1px solid #ddd; padding: 8px;">قیمت کل</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            let total = 0;
+            currentBillItems.forEach(item => {
+                printContent += `
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">${item.name}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">${item.quantity}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">${item.price.toLocaleString()} افغانی</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">${item.total.toLocaleString()} افغانی</td>
+                    </tr>
+                `;
+                total += item.total;
+            });
+            
+            printContent += `
+                        </tbody>
+                        <tfoot>
+                            <tr style="font-weight: bold;">
+                                <td colspan="3" style="border: 1px solid #ddd; padding: 8px; text-align: left;">مجموع کل:</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">${total.toLocaleString()} افغانی</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <div style="margin-top: 30px; text-align: center;">
+                        <p>با تشکر از خرید شما</p>
+                        <p>فروشگاه خوراکه فروشی</p>
+                    </div>
+                </div>
+            `;
+            
+            // باز کردن پنجره چاپ
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+            printWindow.focus();
+            printWindow.print();
+            
+            showAlert('بل برای چاپ آماده است');
+        }
+        
+        // پاک کردن بل
+        function clearBill() {
+            currentBillItems = [];
+            renderBillItems();
+            document.getElementById('billCustomer').value = '';
+            updateBillNumber();
+            document.getElementById('itemName').value = '';
+            document.getElementById('itemQuantity').value = 1;
+            document.getElementById('itemPrice').value = '';
+            
+            showAlert('فرم بل پاک شد');
+        }
+        
+        // رندر لیست بل‌ها
+        function renderBillsList() {
+            const billsListContainer = document.getElementById('billsList');
+            const searchTerm = document.getElementById('searchBills')?.value.toLowerCase() || '';
+            
+            if (storeData.bills.length === 0) {
+                billsListContainer.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: #999; padding: 30px;">
+                            <i class="fas fa-receipt" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
+                            هیچ بل‌ای ثبت نشده است
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            let billsHTML = '';
+            storeData.bills
+                .filter(bill => {
+                    if (!searchTerm) return true;
+                    
+                    const billNumber = bill.number.toLowerCase();
+                    const customer = storeData.customers.find(c => c.id === bill.customerId);
+                    const customerName = customer ? customer.name.toLowerCase() : '';
+                    
+                    return billNumber.includes(searchTerm) || customerName.includes(searchTerm);
+                })
+                .forEach(bill => {
+                    const customer = storeData.customers.find(c => c.id === bill.customerId);
+                    const customerName = customer ? customer.name : 'مشتری نامعلوم';
+                    
+                    billsHTML += `
+                        <tr>
+                            <td>${bill.number}</td>
+                            <td>${bill.date}</td>
+                            <td>${customerName}</td>
+                            <td>${bill.items.length}</td>
+                            <td>${bill.total.toLocaleString()} افغانی</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-sm" onclick="viewBillDetails(${bill.id})">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteBill(${bill.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            
+            billsListContainer.innerHTML = billsHTML;
+        }
+        
+        // مشاهده جزئیات بل
+        function viewBillDetails(billId) {
+            const bill = storeData.bills.find(b => b.id === billId);
+            if (!bill) return;
+            
+            const customer = storeData.customers.find(c => c.id === bill.customerId);
+            const customerName = customer ? customer.name : 'مشتری نامعلوم';
+            
+            let detailsHTML = `
+                <h3 style="margin-bottom: 20px; color: var(--dark-color);">جزئیات بل شماره ${bill.number}</h3>
+                <div style="margin-bottom: 20px;">
+                    <p><strong>تاریخ:</strong> ${bill.date}</p>
+                    <p><strong>مشتری:</strong> ${customerName}</p>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>نام جنس</th>
+                                <th>تعداد</th>
+                                <th>قیمت واحد (افغانی)</th>
+                                <th>قیمت کل (افغانی)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            bill.items.forEach(item => {
+                detailsHTML += `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.price.toLocaleString()}</td>
+                        <td>${item.total.toLocaleString()}</td>
+                    </tr>
+                `;
+            });
+            
+            detailsHTML += `
+                        </tbody>
+                        <tfoot>
+                            <tr class="total-row">
+                                <td colspan="3" style="text-align: left;">مجموع کل:</td>
+                                <td>${bill.total.toLocaleString()} افغانی</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            `;
+            
+            // نمایش در مودال
+            document.getElementById('modalTitle').textContent = `جزئیات بل شماره ${bill.number}`;
+            document.getElementById('modalContent').innerHTML = detailsHTML;
+            document.getElementById('detailsModal').style.display = 'flex';
+        }
+        
+        // حذف بل
+        function deleteBill(billId) {
+            if (confirm('آیا از حذف این بل اطمینان دارید؟ این عمل غیرقابل بازگشت است.')) {
+                const index = storeData.bills.findIndex(b => b.id === billId);
+                if (index !== -1) {
+                    // برگرداندن موجودی به انبار
+                    const bill = storeData.bills[index];
+                    bill.items.forEach(item => {
+                        const product = storeData.products.find(p => p.id === item.productId);
+                        if (product) {
+                            product.stock += item.quantity;
+                        }
+                    });
+                    
+                    storeData.bills.splice(index, 1);
+                    renderBillsList();
+                    updateStats();
+                    saveData();
+                    showAlert('بل با موفقیت حذف شد');
+                }
+            }
+        }
+        
+        // ==============================================
+        // مدیریت قرضه‌ها
+        // ==============================================
+        
+        let currentLoanItems = [];
+        
+        // افزودن آیتم به قرضه
+        function addLoanItem() {
+            const itemName = document.getElementById('loanItemName').value;
+            const itemQuantity = document.getElementById('loanItemQuantity').value;
+            const itemPrice = document.getElementById('loanItemPrice').value;
+            
+            if (!itemName || !itemQuantity || !itemPrice) {
+                showAlert('لطفاً تمام فیلدهای جنس را پر کنید', 'error');
+                return;
+            }
+            
+            // پیدا کردن نام جنس
+            const product = storeData.products.find(p => p.id == itemName);
+            if (!product) {
+                showAlert('جنس انتخاب شده معتبر نیست', 'error');
+                return;
+            }
+            
+            const quantity = parseInt(itemQuantity);
+            const price = parseInt(itemPrice);
+            const total = quantity * price;
+            
+            // بررسی موجودی
+            if (product.stock < quantity) {
+                showAlert(`موجودی کافی نیست. موجودی فعلی: ${product.stock}`, 'error');
+                return;
+            }
+            
+            // افزودن به لیست موقت
+            currentLoanItems.push({
+                productId: product.id,
+                name: product.name,
+                quantity: quantity,
+                price: price,
+                total: total
+            });
+            
+            // رندر مجدد جدول آیتم‌های قرضه
+            renderLoanItems();
+            
+            // پاک کردن فرم
+            document.getElementById('loanItemQuantity').value = 1;
+            document.getElementById('loanItemPrice').value = product.price;
+            
+            showAlert('جنس به قرضه اضافه شد');
+        }
+        
+        // حذف آیتم از قرضه
+        function removeLoanItem(index) {
+            currentLoanItems.splice(index, 1);
+            renderLoanItems();
+            showAlert('جنس از قرضه حذف شد');
+        }
+        
+        // رندر آیتم‌های قرضه
+        function renderLoanItems() {
+            const loanItemsContainer = document.getElementById('loanItems');
+            let total = 0;
+            
+            if (currentLoanItems.length === 0) {
+                loanItemsContainer.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #999; padding: 30px;">
+                            <i class="fas fa-box-open" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
+                            هیچ جنس‌ای اضافه نشده است
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('loanTotal').textContent = '0 افغانی';
+                return;
+            }
+            
+            let itemsHTML = '';
+            currentLoanItems.forEach((item, index) => {
+                itemsHTML += `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.price.toLocaleString()} افغانی</td>
+                        <td>${item.total.toLocaleString()} افغانی</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="removeLoanItem(${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                total += item.total;
+            });
+            
+            loanItemsContainer.innerHTML = itemsHTML;
+            document.getElementById('loanTotal').textContent = total.toLocaleString() + ' افغانی';
+        }
+        
+        // ذخیره قرضه
+        function saveLoan() {
+            const loanCustomer = document.getElementById('loanCustomer').value;
+            const loanDate = document.getElementById('loanDate').value;
+            
+            if (!loanCustomer) {
+                showAlert('لطفاً مشتری را انتخاب کنید', 'error');
+                return;
+            }
+            
+            if (currentLoanItems.length === 0) {
+                showAlert('لطفاً حداقل یک جنس به قرضه اضافه کنید', 'error');
+                return;
+            }
+            
+            // پیدا کردن مشتری
+            const customer = storeData.customers.find(c => c.id == loanCustomer);
+            if (!customer) {
+                showAlert('مشتری انتخاب شده معتبر نیست', 'error');
+                return;
+            }
+            
+            // محاسبه مجموع
+            const total = currentLoanItems.reduce((sum, item) => sum + item.total, 0);
+            
+            // ایجاد قرضه جدید
+            const newLoan = {
+                id: storeData.settings.nextLoanId,
+                customerId: parseInt(loanCustomer),
+                date: loanDate,
+                items: [...currentLoanItems],
+                total: total,
+                status: 'unpaid'
+            };
+            
+            // کسر از موجودی انبار
+            currentLoanItems.forEach(item => {
+                const product = storeData.products.find(p => p.id === item.productId);
+                if (product) {
+                    product.stock -= item.quantity;
+                }
+            });
+            
+            // افزودن به لیست قرضه‌ها
+            storeData.loans.push(newLoan);
+            
+            // افزایش شمارنده
+            storeData.settings.nextLoanId++;
+            
+            // افزودن فعالیت
+            addActivity("قرضه", `قرضه جدید برای ${customer.name}`, total);
+            
+            // به‌روزرسانی لیست‌ها
+            renderLoansList();
+            
+            // پاک کردن فرم
+            clearLoan();
+            
+            // به‌روزرسانی آمارها
+            updateStats();
+            
+            // ذخیره داده‌ها
+            saveData();
+            
+            // نمایش اعلان موفقیت
+            showAlert(`قرضه جدید برای ${customer.name} با موفقیت ثبت شد`);
+        }
+        
+        // پاک کردن قرضه
+        function clearLoan() {
+            currentLoanItems = [];
+            renderLoanItems();
+            document.getElementById('loanCustomer').value = '';
+            document.getElementById('loanItemName').value = '';
+            document.getElementById('loanItemQuantity').value = 1;
+            document.getElementById('loanItemPrice').value = '';
+            
+            showAlert('فرم قرضه پاک شد');
+        }
+        
+        // رندر لیست قرضه‌ها
+        function renderLoansList() {
+            const loansListContainer = document.getElementById('loansList');
+            const searchTerm = document.getElementById('searchLoans')?.value.toLowerCase() || '';
+            
+            if (storeData.loans.length === 0) {
+                loansListContainer.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: #999; padding: 30px;">
+                            <i class="fas fa-hand-holding-usd" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
+                            هیچ قرضه‌ای ثبت نشده است
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            let loansHTML = '';
+            storeData.loans
+                .filter(loan => {
+                    if (!searchTerm) return true;
+                    
+                    const customer = storeData.customers.find(c => c.id === loan.customerId);
+                    const customerName = customer ? customer.name.toLowerCase() : '';
+                    
+                    return customerName.includes(searchTerm);
+                })
+                .forEach(loan => {
+                    const customer = storeData.customers.find(c => c.id === loan.customerId);
+                    if (!customer) return;
+                    
+                    // ایجاد لیست اجناس
+                    const itemsList = loan.items.map(item => 
+                        `${item.name} (${item.quantity})`
+                    ).join('، ');
+                    
+                    // وضعیت پرداخت
+                    const statusText = loan.status === 'paid' ? 'پرداخت شده' : 'پرداخت نشده';
+                    const statusClass = loan.status === 'paid' ? 'status-paid' : 'status-unpaid';
+                    
+                    loansHTML += `
+                        <tr>
+                            <td>${loan.id}</td>
+                            <td>${customer.name} - ولد: ${customer.father} - قریه: ${customer.village}</td>
+                            <td>${loan.date}</td>
+                            <td>${itemsList}</td>
+                            <td>${loan.total.toLocaleString()} افغانی</td>
+                            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-success btn-sm" onclick="markLoanAsPaid(${loan.id})" ${loan.status === 'paid' ? 'disabled' : ''}>
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteLoan(${loan.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            
+            loansListContainer.innerHTML = loansHTML;
+        }
+        
+        // علامت‌گذاری قرضه به عنوان پرداخت شده
+        function markLoanAsPaid(loanId) {
+            if (confirm('آیا این قرضه پرداخت شده است؟')) {
+                const loan = storeData.loans.find(l => l.id === loanId);
+                if (loan) {
+                    loan.status = 'paid';
+                    renderLoansList();
+                    updateStats();
+                    saveData();
+                    showAlert('قرضه به عنوان پرداخت شده علامت‌گذاری شد');
+                }
+            }
+        }
+        
+        // حذف قرضه
+        function deleteLoan(loanId) {
+            if (confirm('آیا از حذف این قرضه اطمینان دارید؟ این عمل غیرقابل بازگشت است.')) {
+                const index = storeData.loans.findIndex(l => l.id === loanId);
+                if (index !== -1) {
+                    // برگرداندن موجودی به انبار
+                    const loan = storeData.loans[index];
+                    loan.items.forEach(item => {
+                        const product = storeData.products.find(p => p.id === item.productId);
+                        if (product) {
+                            product.stock += item.quantity;
+                        }
+                    });
+                    
+                    storeData.loans.splice(index, 1);
+                    renderLoansList();
+                    updateStats();
+                    saveData();
+                    showAlert('قرضه با موفقیت حذف شد');
+                }
+            }
+        }
+        
+        // ==============================================
+        // مدیریت خرید عمده
+        // ==============================================
+        
+        let currentPurchaseItems = [];
+        
+        // به‌روزرسانی شماره خرید
+        function updatePurchaseNumber() {
+            const purchaseNumber = `PUR-${String(storeData.settings.nextPurchaseId).padStart(3, '0')}`;
+            document.getElementById('purchaseNumber').value = purchaseNumber;
+        }
+        
+        // افزودن آیتم به خرید
+        function addPurchaseItem() {
+            const itemName = document.getElementById('purchaseItemName').value;
+            const itemQuantity = document.getElementById('purchaseItemQuantity').value;
+            const itemUnit = document.getElementById('purchaseItemUnit').value;
+            const itemPrice = document.getElementById('purchaseItemPrice').value;
+            
+            if (!itemName || !itemQuantity || !itemPrice) {
+                showAlert('لطفاً تمام فیلدهای جنس را پر کنید', 'error');
+                return;
+            }
+            
+            const quantity = parseInt(itemQuantity);
+            const price = parseInt(itemPrice);
+            const total = quantity * price;
+            
+            // افزودن به لیست موقت
+            currentPurchaseItems.push({
+                name: itemName,
+                quantity: quantity,
+                unit: itemUnit,
+                price: price,
+                total: total
+            });
+            
+            // رندر مجدد جدول آیتم‌های خرید
+            renderPurchaseItems();
+            
+            // پاک کردن فرم
+            document.getElementById('purchaseItemName').value = '';
+            document.getElementById('purchaseItemQuantity').value = 1;
+            document.getElementById('purchaseItemPrice').value = '';
+            
+            showAlert('جنس به خرید اضافه شد');
+        }
+        
+        // حذف آیتم از خرید
+        function removePurchaseItem(index) {
+            currentPurchaseItems.splice(index, 1);
+            renderPurchaseItems();
+            showAlert('جنس از خرید حذف شد');
+        }
+        
+        // رندر آیتم‌های خرید
+        function renderPurchaseItems() {
+            const purchaseItemsContainer = document.getElementById('purchaseItems');
+            let total = 0;
+            
+            if (currentPurchaseItems.length === 0) {
+                purchaseItemsContainer.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: #999; padding: 30px;">
+                            <i class="fas fa-box-open" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
+                            هیچ جنس‌ای اضافه نشده است
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('purchaseTotal').textContent = '0 افغانی';
+                return;
+            }
+            
+            let itemsHTML = '';
+            currentPurchaseItems.forEach((item, index) => {
+                itemsHTML += `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.unit}</td>
+                        <td>${item.price.toLocaleString()} افغانی</td>
+                        <td>${item.total.toLocaleString()} افغانی</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="removePurchaseItem(${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                total += item.total;
+            });
+            
+            purchaseItemsContainer.innerHTML = itemsHTML;
+            document.getElementById('purchaseTotal').textContent = total.toLocaleString() + ' افغانی';
+        }
+        
+        // ذخیره خرید
+        function savePurchase() {
+            const purchaseNumber = document.getElementById('purchaseNumber').value;
+            const purchaseDate = document.getElementById('purchaseDate').value;
+            const purchaseShop = document.getElementById('purchaseShop').value;
+            
+            if (!purchaseShop) {
+                showAlert('لطفاً نام فروشگاه را وارد کنید', 'error');
+                return;
+            }
+            
+            if (currentPurchaseItems.length === 0) {
+                showAlert('لطفاً حداقل یک جنس به خرید اضافه کنید', 'error');
+                return;
+            }
+            
+            // محاسبه مجموع
+            const total = currentPurchaseItems.reduce((sum, item) => sum + item.total, 0);
+            
+            // ایجاد خرید جدید
+            const newPurchase = {
+                id: storeData.settings.nextPurchaseId,
+                number: purchaseNumber,
+                date: purchaseDate,
+                shop: purchaseShop,
+                items: [...currentPurchaseItems],
+                total: total
+            };
+            
+            // افزودن به لیست خریدها
+            storeData.purchases.push(newPurchase);
+            
+            // افزایش شمارنده
+            storeData.settings.nextPurchaseId++;
+            
+            // به‌روزرسانی موجودی اجناس
+            updateProductStockFromPurchase(currentPurchaseItems);
+            
+            // افزودن فعالیت
+            addActivity("خرید عمده", `خرید عمده از ${purchaseShop}`, total);
+            
+            // به‌روزرسانی لیست‌ها
+            renderPurchasesList();
+            
+            // پاک کردن فرم
+            clearPurchase();
+            
+            // به‌روزرسانی آمارها
+            updateStats();
+            
+            // ذخیره داده‌ها
+            saveData();
+            
+            // نمایش اعلان موفقیت
+            showAlert(`خرید عمده شماره ${purchaseNumber} با موفقیت ثبت شد`);
+        }
+        
+        // به‌روزرسانی موجودی از خرید
+        function updateProductStockFromPurchase(items) {
+            items.forEach(purchaseItem => {
+                // بررسی آیا جنس از قبل وجود دارد
+                const existingProduct = storeData.products.find(p => p.name.toLowerCase() === purchaseItem.name.toLowerCase());
+                
+                if (existingProduct) {
+                    // افزایش موجودی جنس موجود
+                    existingProduct.stock += purchaseItem.quantity;
+                    // به‌روزرسانی قیمت خرید
+                    existingProduct.cost = purchaseItem.price;
+                } else {
+                    // افزودن جنس جدید
+                    const newProduct = {
+                        id: storeData.settings.nextProductId,
+                        name: purchaseItem.name,
+                        category: "دیگر",
+                        price: Math.round(purchaseItem.price * 1.2), // 20% سود
+                        cost: purchaseItem.price,
+                        stock: purchaseItem.quantity,
+                        unit: purchaseItem.unit
+                    };
+                    
+                    storeData.products.push(newProduct);
+                    storeData.settings.nextProductId++;
+                }
+            });
+            
+            // به‌روزرسانی dropdownها
+            updateProductDropdowns();
+        }
+        
+        // پاک کردن خرید
+        function clearPurchase() {
+            currentPurchaseItems = [];
+            renderPurchaseItems();
+            document.getElementById('purchaseShop').value = '';
+            updatePurchaseNumber();
+            document.getElementById('purchaseItemName').value = '';
+            document.getElementById('purchaseItemQuantity').value = 1;
+            document.getElementById('purchaseItemUnit').value = 'کیلوگرم';
+            document.getElementById('purchaseItemPrice').value = '';
+            
+            showAlert('فرم خرید پاک شد');
+        }
+        
+        // رندر لیست خریدها
+        function renderPurchasesList() {
+            const purchasesListContainer = document.getElementById('purchasesList');
+            const searchTerm = document.getElementById('searchPurchases')?.value.toLowerCase() || '';
+            
+            if (storeData.purchases.length === 0) {
+                purchasesListContainer.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: #999; padding: 30px;">
+                            <i class="fas fa-shopping-cart" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
+                            هیچ خریدی ثبت نشده است
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            let purchasesHTML = '';
+            storeData.purchases
+                .filter(purchase => {
+                    if (!searchTerm) return true;
+                    
+                    const purchaseNumber = purchase.number.toLowerCase();
+                    const shop = purchase.shop.toLowerCase();
+                    
+                    return purchaseNumber.includes(searchTerm) || shop.includes(searchTerm);
+                })
+                .forEach(purchase => {
+                    purchasesHTML += `
+                        <tr>
+                            <td>${purchase.number}</td>
+                            <td>${purchase.date}</td>
+                            <td>${purchase.shop}</td>
+                            <td>${purchase.items.length}</td>
+                            <td>${purchase.total.toLocaleString()} افغانی</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-sm" onclick="viewPurchaseDetails(${purchase.id})">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="deletePurchase(${purchase.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            
+            purchasesListContainer.innerHTML = purchasesHTML;
+        }
+        
+        // مشاهده جزئیات خرید
+        function viewPurchaseDetails(purchaseId) {
+            const purchase = storeData.purchases.find(p => p.id === purchaseId);
+            if (!purchase) return;
+            
+            let detailsHTML = `
+                <h3 style="margin-bottom: 20px; color: var(--dark-color);">جزئیات خرید شماره ${purchase.number}</h3>
+                <div style="margin-bottom: 20px;">
+                    <p><strong>تاریخ خرید:</strong> ${purchase.date}</p>
+                    <p><strong>فروشگاه:</strong> ${purchase.shop}</p>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>نام جنس</th>
+                                <th>مقدار</th>
+                                <th>واحد</th>
+                                <th>قیمت واحد (افغانی)</th>
+                                <th>قیمت کل (افغانی)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            purchase.items.forEach(item => {
+                detailsHTML += `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.unit}</td>
+                        <td>${item.price.toLocaleString()}</td>
+                        <td>${item.total.toLocaleString()}</td>
+                    </tr>
+                `;
+            });
+            
+            detailsHTML += `
+                        </tbody>
+                        <tfoot>
+                            <tr class="total-row">
+                                <td colspan="4" style="text-align: left;">مجموع کل:</td>
+                                <td>${purchase.total.toLocaleString()} افغانی</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            `;
+            
+            // نمایش در مودال
+            document.getElementById('modalTitle').textContent = `جزئیات خرید شماره ${purchase.number}`;
+            document.getElementById('modalContent').innerHTML = detailsHTML;
+            document.getElementById('detailsModal').style.display = 'flex';
+        }
+        
+        // حذف خرید
+        function deletePurchase(purchaseId) {
+            if (confirm('آیا از حذف این خرید اطمینان دارید؟ این عمل غیرقابل بازگشت است.')) {
+                const index = storeData.purchases.findIndex(p => p.id === purchaseId);
+                if (index !== -1) {
+                    // کسر از موجودی انبار
+                    const purchase = storeData.purchases[index];
+                    purchase.items.forEach(purchaseItem => {
+                        const product = storeData.products.find(p => p.name.toLowerCase() === purchaseItem.name.toLowerCase());
+                        if (product) {
+                            product.stock -= purchaseItem.quantity;
+                            if (product.stock < 0) product.stock = 0;
+                        }
+                    });
+                    
+                    storeData.purchases.splice(index, 1);
+                    renderPurchasesList();
+                    updateStats();
+                    saveData();
+                    showAlert('خرید با موفقیت حذف شد');
+                }
+            }
+        }
+        
+        // ==============================================
+        // مدیریت اجناس
+        // ==============================================
+        
+        // ذخیره جنس
+        function saveProduct() {
+            const productName = document.getElementById('productName').value;
+            const productCategory = document.getElementById('productCategory').value;
+            const productPrice = document.getElementById('productPrice').value;
+            const productCost = document.getElementById('productCost').value;
+            const productStock = document.getElementById('productStock').value;
+            const productUnit = document.getElementById('productUnit').value;
+            
+            if (!productName || !productCategory || !productPrice || !productCost || !productStock || !productUnit) {
+                showAlert('لطفاً تمام فیلدهای جنس را پر کنید', 'error');
+                return;
+            }
+            
+            // ایجاد جنس جدید
+            const newProduct = {
+                id: storeData.settings.nextProductId,
+                name: productName,
+                category: productCategory,
+                price: parseInt(productPrice),
+                cost: parseInt(productCost),
+                stock: parseInt(productStock),
+                unit: productUnit
+            };
+            
+            // افزودن به لیست اجناس
+            storeData.products.push(newProduct);
+            
+            // افزایش شمارنده
+            storeData.settings.nextProductId++;
+            
+            // به‌روزرسانی لیست‌ها
+            renderProductsList();
+            updateProductDropdowns();
+            
+            // پاک کردن فرم
+            clearProductForm();
+            
+            // ذخیره داده‌ها
+            saveData();
+            
+            // نمایش اعلان موفقیت
+            showAlert(`جنس ${productName} با موفقیت ثبت شد`);
+        }
+        
+        // پاک کردن فرم جنس
+        function clearProductForm() {
+            document.getElementById('productName').value = '';
+            document.getElementById('productCategory').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productCost').value = '';
+            document.getElementById('productStock').value = '';
+            document.getElementById('productUnit').value = 'عدد';
+            
+            showAlert('فرم جنس پاک شد');
+        }
+        
+        // رندر لیست اجناس
+        function renderProductsList() {
+            const productsListContainer = document.getElementById('productsList');
+            const searchTerm = document.getElementById('searchProducts')?.value.toLowerCase() || '';
+            
+            if (storeData.products.length === 0) {
+                productsListContainer.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: #999; padding: 30px;">
+                            <i class="fas fa-box" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
+                            هیچ جنس‌ای ثبت نشده است
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            let productsHTML = '';
+            storeData.products
+                .filter(product => {
+                    if (!searchTerm) return true;
+                    
+                    const name = product.name.toLowerCase();
+                    const category = product.category.toLowerCase();
+                    
+                    return name.includes(searchTerm) || category.includes(searchTerm);
+                })
+                .forEach(product => {
+                    productsHTML += `
+                        <tr>
+                            <td>${product.name}</td>
+                            <td>${product.category}</td>
+                            <td>${product.price.toLocaleString()} افغانی</td>
+                            <td>${product.cost.toLocaleString()} افغانی</td>
+                            <td>${product.stock}</td>
+                            <td>${product.unit}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-danger btn-sm" onclick="deleteProduct(${product.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            
+            productsListContainer.innerHTML = productsHTML;
+        }
+        
+        // حذف جنس
+        function deleteProduct(productId) {
+            if (confirm('آیا از حذف این جنس اطمینان دارید؟ این عمل غیرقابل بازگشت است.')) {
+                // بررسی آیا جنس در بل یا قرضه استفاده شده
+                const usedInBills = storeData.bills.some(bill => 
+                    bill.items.some(item => item.productId === productId)
+                );
+                
+                const usedInLoans = storeData.loans.some(loan => 
+                    loan.items.some(item => item.productId === productId)
+                );
+                
+                if (usedInBills || usedInLoans) {
+                    showAlert('این جنس در بل‌ها یا قرضه‌ها استفاده شده و قابل حذف نیست', 'error');
+                    return;
+                }
+                
+                const index = storeData.products.findIndex(p => p.id === productId);
+                if (index !== -1) {
+                    storeData.products.splice(index, 1);
+                    renderProductsList();
+                    updateProductDropdowns();
+                    saveData();
+                    showAlert('جنس با موفقیت حذف شد');
+                }
+            }
+        }
+        
+        // ==============================================
+        // مدیریت مشتریان
+        // ==============================================
+        
+        // ذخیره مشتری
+        function saveCustomer() {
+            const customerName = document.getElementById('customerName').value;
+            const customerFather = document.getElementById('customerFather').value;
+            const customerVillage = document.getElementById('customerVillage').value;
+            const customerPhone = document.getElementById('customerPhone').value;
+            
+            if (!customerName || !customerFather || !customerVillage || !customerPhone) {
+                showAlert('لطفاً تمام فیلدهای مشتری را پر کنید', 'error');
+                return;
+            }
+            
+            // ایجاد مشتری جدید
+            const newCustomer = {
+                id: storeData.settings.nextCustomerId,
+                name: customerName,
+                father: customerFather,
+                village: customerVillage,
+                phone: customerPhone
+            };
+            
+            // افزودن به لیست مشتریان
+            storeData.customers.push(newCustomer);
+            
+            // افزایش شمارنده
+            storeData.settings.nextCustomerId++;
+            
+            // به‌روزرسانی لیست‌ها
+            renderCustomersList();
+            updateCustomerDropdowns();
+            
+            // پاک کردن فرم
+            clearCustomerForm();
+            
+            // ذخیره داده‌ها
+            saveData();
+            
+            // نمایش اعلان موفقیت
+            showAlert(`مشتری ${customerName} با موفقیت ثبت شد`);
+        }
+        
+        // پاک کردن فرم مشتری
+        function clearCustomerForm() {
+            document.getElementById('customerName').value = '';
+            document.getElementById('customerFather').value = '';
+            document.getElementById('customerVillage').value = '';
+            document.getElementById('customerPhone').value = '';
+            
+            showAlert('فرم مشتری پاک شد');
+        }
+        
+        // رندر لیست مشتریان
+        function renderCustomersList() {
+            const customersListContainer = document.getElementById('customersList');
+            const searchTerm = document.getElementById('searchCustomers')?.value.toLowerCase() || '';
+            
+            if (storeData.customers.length === 0) {
+                customersListContainer.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: #999; padding: 30px;">
+                            <i class="fas fa-users" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
+                            هیچ مشتری‌ای ثبت نشده است
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            let customersHTML = '';
+            storeData.customers
+                .filter(customer => {
+                    if (!searchTerm) return true;
+                    
+                    const name = customer.name.toLowerCase();
+                    const father = customer.father.toLowerCase();
+                    const village = customer.village.toLowerCase();
+                    
+                    return name.includes(searchTerm) || father.includes(searchTerm) || village.includes(searchTerm);
+                })
+                .forEach(customer => {
+                    // تعداد قرضه‌های مشتری
+                    const loanCount = storeData.loans.filter(loan => loan.customerId === customer.id).length;
+                    
+                    customersHTML += `
+                        <tr>
+                            <td>${customer.name}</td>
+                            <td>${customer.father}</td>
+                            <td>${customer.village}</td>
+                            <td>${customer.phone}</td>
+                            <td>${loanCount}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-danger btn-sm" onclick="deleteCustomer(${customer.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            
+            customersListContainer.innerHTML = customersHTML;
+        }
+        
+        // حذف مشتری
+        function deleteCustomer(customerId) {
+            // بررسی آیا مشتری قرضه دارد
+            const hasLoans = storeData.loans.some(loan => loan.customerId === customerId);
+            
+            if (hasLoans) {
+                showAlert('این مشتری قرضه فعال دارد و قابل حذف نیست', 'error');
+                return;
+            }
+            
+            if (confirm('آیا از حذف این مشتری اطمینان دارید؟ این عمل غیرقابل بازگشت است.')) {
+                const index = storeData.customers.findIndex(c => c.id === customerId);
+                if (index !== -1) {
+                    storeData.customers.splice(index, 1);
+                    renderCustomersList();
+                    updateCustomerDropdowns();
+                    saveData();
+                    showAlert('مشتری با موفقیت حذف شد');
+                }
+            }
+        }
+        
+        // ==============================================
+        // گزارش‌گیری و آمار
+        // ==============================================
+        
+        // ایجاد نمودار فروش
+        function createSalesChart() {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            
+            // داده‌های نمونه برای نمودار
+            const last7Days = [];
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                last7Days.push(date.toISOString().split('T')[0]);
+            }
+            
+            const salesData = last7Days.map(date => {
+                const billsForDate = storeData.bills.filter(bill => bill.date === date);
+                return billsForDate.reduce((sum, bill) => sum + bill.total, 0);
+            });
+            
+            const loansData = last7Days.map(date => {
+                const loansForDate = storeData.loans.filter(loan => loan.date === date && loan.status === 'paid');
+                return loansForDate.reduce((sum, loan) => sum + loan.total, 0);
+            });
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: last7Days,
+                    datasets: [
+                        {
+                            label: 'فروش نقدی',
+                            data: salesData,
+                            borderColor: 'rgba(67, 97, 238, 1)',
+                            backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'قرضه‌های پرداخت شده',
+                            data: loansData,
+                            borderColor: 'rgba(76, 201, 240, 1)',
+                            backgroundColor: 'rgba(76, 201, 240, 0.1)',
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            rtl: true
+                        },
+                        title: {
+                            display: true,
+                            text: 'فروش ۷ روز گذشته',
+                            rtl: true
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString() + ' افغانی';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // ایجاد گزارش فروش
+        function generateSalesReport() {
+            const startDate = document.getElementById('reportStartDate').value;
+            const endDate = document.getElementById('reportEndDate').value;
+            
+            if (!startDate || !endDate) {
+                showAlert('لطفاً تاریخ شروع و پایان را انتخاب کنید', 'error');
+                return;
+            }
+            
+            // فیلتر کردن بل‌ها در بازه تاریخ
+            const billsInRange = storeData.bills.filter(bill => 
+                bill.date >= startDate && bill.date <= endDate
+            );
+            
+            // فیلتر کردن قرضه‌ها در بازه تاریخ
+            const loansInRange = storeData.loans.filter(loan => 
+                loan.date >= startDate && loan.date <= endDate
+            );
+            
+            const paidLoansInRange = loansInRange.filter(loan => loan.status === 'paid');
+            
+            // محاسبه مجموع‌ها
+            const totalSales = billsInRange.reduce((sum, bill) => sum + bill.total, 0);
+            const totalLoans = loansInRange.reduce((sum, loan) => sum + loan.total, 0);
+            const totalPaidLoans = paidLoansInRange.reduce((sum, loan) => sum + loan.total, 0);
+            const netIncome = totalSales + totalPaidLoans;
+            
+            // نمایش نتایج
+            const resultsContainer = document.getElementById('salesReportResults');
+            
+            resultsContainer.innerHTML = `
+                <tr>
+                    <td>${startDate} تا ${endDate}</td>
+                    <td>${billsInRange.length}</td>
+                    <td>${loansInRange.length}</td>
+                    <td>${totalSales.toLocaleString()} افغانی</td>
+                    <td>${totalLoans.toLocaleString()} افغانی</td>
+                    <td>${netIncome.toLocaleString()} افغانی</td>
+                </tr>
+            `;
+            
+            // ایجاد نمودار گزارش
+            const ctx = document.getElementById('reportChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['فروش نقدی', 'قرضه‌های ثبت شده', 'قرضه‌های پرداخت شده', 'درآمد خالص'],
+                    datasets: [{
+                        label: 'مبلغ (افغانی)',
+                        data: [totalSales, totalLoans, totalPaidLoans, netIncome],
+                        backgroundColor: [
+                            'rgba(67, 97, 238, 0.7)',
+                            'rgba(248, 150, 30, 0.7)',
+                            'rgba(76, 201, 240, 0.7)',
+                            'rgba(76, 201, 240, 0.3)'
+                        ],
+                        borderColor: [
+                            'rgba(67, 97, 238, 1)',
+                            'rgba(248, 150, 30, 1)',
+                            'rgba(76, 201, 240, 1)',
+                            'rgba(76, 201, 240, 0.5)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: `گزارش فروش از ${startDate} تا ${endDate}`,
+                            rtl: true
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString() + ' افغانی';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            showAlert('گزارش با موفقیت ایجاد شد');
+        }
+        
+        // ==============================================
+        // مدیریت موجودی انبار
+        // ==============================================
+        
+        // رندر موجودی انبار
+        function renderInventory() {
+            const inventoryListContainer = document.getElementById('inventoryList');
+            const searchTerm = document.getElementById('searchInventory')?.value.toLowerCase() || '';
+            const minStock = storeData.settings.minStock;
+            
+            if (storeData.products.length === 0) {
+                inventoryListContainer.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: #999; padding: 30px;">
+                            <i class="fas fa-warehouse" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
+                            هیچ جنس‌ای ثبت نشده است
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            let inventoryHTML = '';
+            storeData.products
+                .filter(product => {
+                    if (!searchTerm) return true;
+                    return product.name.toLowerCase().includes(searchTerm);
+                })
+                .forEach(product => {
+                    // تعیین وضعیت موجودی
+                    let status = '';
+                    let statusClass = '';
+                    if (product.stock > minStock * 2) {
+                        status = 'کافی';
+                        statusClass = 'status-paid';
+                    } else if (product.stock > minStock) {
+                        status = 'متوسط';
+                        statusClass = 'status-pending';
+                    } else {
+                        status = 'کم';
+                        statusClass = 'status-unpaid';
+                    }
+                    
+                    inventoryHTML += `
+                        <tr>
+                            <td>${product.name}</td>
+                            <td>${product.stock}</td>
+                            <td>${minStock}</td>
+                            <td>${product.unit}</td>
+                            <td><span class="${statusClass}">${status}</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-sm" onclick="addStock(${product.id})">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            
+            inventoryListContainer.innerHTML = inventoryHTML;
+        }
+        
+        // رندر موجودی بحرانی
+        function renderCriticalInventory() {
+            const criticalInventoryContainer = document.getElementById('criticalInventory');
+            const minStock = storeData.settings.minStock;
+            
+            // فیلتر کردن محصولات با موجودی کمتر از حداقل
+            const criticalProducts = storeData.products.filter(product => product.stock <= minStock);
+            
+            if (criticalProducts.length === 0) {
+                criticalInventoryContainer.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: #999; padding: 30px;">
+                            <i class="fas fa-check-circle" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
+                            هیچ جنس‌ای با موجودی بحرانی وجود ندارد
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            let criticalHTML = '';
+            criticalProducts.forEach(product => {
+                const shortage = minStock - product.stock;
+                
+                criticalHTML += `
+                    <tr>
+                        <td>${product.name}</td>
+                        <td>${product.stock}</td>
+                        <td>${minStock}</td>
+                        <td>${shortage}</td>
+                        <td>${product.unit}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-sm" onclick="addStock(${product.id})">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            criticalInventoryContainer.innerHTML = criticalHTML;
+        }
+        
+        // افزودن موجودی
+        function addStock(productId) {
+            const product = storeData.products.find(p => p.id === productId);
+            if (!product) return;
+            
+            const amount = prompt(`مقدار موجودی جدید برای ${product.name} (${product.unit}):`, product.stock + 10);
+            if (amount && !isNaN(amount)) {
+                product.stock = parseInt(amount);
+                renderInventory();
+                renderCriticalInventory();
+                saveData();
+                showAlert(`موجودی ${product.name} به ${amount} ${product.unit} به‌روزرسانی شد`);
+            }
+        }
+        
+        // ==============================================
+        // فعالیت‌های اخیر
+        // ==============================================
+        
+        // رندر فعالیت‌های اخیر
+        function renderRecentActivity() {
+            const recentActivityContainer = document.getElementById('recentActivity');
+            
+            if (storeData.recentActivities.length === 0) {
+                recentActivityContainer.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: #999; padding: 30px;">
+                            <i class="fas fa-history" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
+                            هیچ فعالیتی ثبت نشده است
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            let activityHTML = '';
+            storeData.recentActivities.forEach(activity => {
+                let badgeClass = 'status-paid';
+                if (activity.type === 'قرضه') {
+                    badgeClass = 'status-unpaid';
+                } else if (activity.type === 'خرید عمده') {
+                    badgeClass = 'status-pending';
+                }
+                
+                activityHTML += `
+                    <tr>
+                        <td>${activity.date}</td>
+                        <td><span class="status-badge ${badgeClass}">${activity.type}</span></td>
+                        <td>${activity.details}</td>
+                        <td>${activity.amount.toLocaleString()} افغانی</td>
+                    </tr>
+                `;
+            });
+            
+            recentActivityContainer.innerHTML = activityHTML;
+        }
+        
+        // ==============================================
+        // تنظیمات سیستم
+        // ==============================================
+        
+        // بارگذاری تنظیمات
+        function loadSettings() {
+            document.getElementById('shopName').value = storeData.settings.shopName;
+            document.getElementById('currency').value = storeData.settings.currency;
+            document.getElementById('taxRate').value = storeData.settings.taxRate;
+            document.getElementById('minStock').value = storeData.settings.minStock;
+        }
+        
+        // ذخیره تنظیمات
+        function saveSettings() {
+            storeData.settings.shopName = document.getElementById('shopName').value;
+            storeData.settings.currency = document.getElementById('currency').value;
+            storeData.settings.taxRate = parseInt(document.getElementById('taxRate').value);
+            storeData.settings.minStock = parseInt(document.getElementById('minStock').value);
+            
+            saveData();
+            showAlert('تنظیمات با موفقیت ذخیره شد');
+        }
+        
+        // صادرات داده‌ها
+        function exportData() {
+            const dataStr = JSON.stringify(storeData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `پشتیبان_فروشگاه_${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showAlert('پشتیبان با موفقیت دانلود شد');
+        }
+        
+        // واردات داده‌ها
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    if (confirm('آیا از وارد کردن داده‌های جدید اطمینان دارید؟ داده‌های فعلی جایگزین خواهند شد.')) {
+                        storeData = importedData;
+                        saveData();
+                        loadData();
+                        showAlert('داده‌ها با موفقیت وارد شدند');
+                    }
+                } catch (error) {
+                    showAlert('خطا در خواندن فایل پشتیبان', 'error');
+                }
+            };
+            reader.readAsText(file);
+            
+            // ریست کردن input فایل
+            event.target.value = '';
+        }
+        
+        // بازنشانی داده‌ها
+        function resetData() {
+            if (confirm('آیا از حذف تمام داده‌های سیستم اطمینان دارید؟ این عمل غیرقابل بازگشت است.')) {
+                localStorage.removeItem(STORAGE_KEY);
+                initializeSampleData();
+                saveData();
+                loadData();
+                showAlert('همه داده‌ها با موفقیت حذف شدند');
+            }
+        }
+        
+        // بستن مودال
+        function closeModal() {
+            document.getElementById('detailsModal').style.display = 'none';
+        }
+        
+        // رندر همه لیست‌ها
+        function renderAllLists() {
+            renderBillsList();
+            renderLoansList();
+            renderPurchasesList();
+            renderProductsList();
+            renderCustomersList();
+            renderInventory();
+            renderCriticalInventory();
+            renderRecentActivity();
+        }
+        
+        // ==============================================
+        // جستجو
+        // ==============================================
+        
+        // تنظیم جستجو برای بل‌ها
+        document.getElementById('searchBills')?.addEventListener('input', function() {
+            renderBillsList();
+        });
+        
+        // تنظیم جستجو برای قرضه‌ها
+        document.getElementById('searchLoans')?.addEventListener('input', function() {
+            renderLoansList();
+        });
+        
+        // تنظیم جستجو برای خریدها
+        document.getElementById('searchPurchases')?.addEventListener('input', function() {
+            renderPurchasesList();
+        });
+        
+        // تنظیم جستجو برای محصولات
+        document.getElementById('searchProducts')?.addEventListener('input', function() {
+            renderProductsList();
+        });
+        
+        // تنظیم جستجو برای مشتریان
+        document.getElementById('searchCustomers')?.addEventListener('input', function() {
+            renderCustomersList();
+        });
+        
+        // تنظیم جستجو برای موجودی
+        document.getElementById('searchInventory')?.addEventListener('input', function() {
+            renderInventory();
+        });
+        
+        // بستن مودال با کلیک بیرون از آن
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('detailsModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
